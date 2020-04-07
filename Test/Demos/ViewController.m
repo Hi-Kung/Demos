@@ -8,6 +8,18 @@
 
 #import "ViewController.h"
 #import "HKEasyTouchButton.h"
+#import "NSObject+Test.h"
+#import "CALayer+SVGradientLayer.h"
+
+@interface AModel : NSObject
+@property (nonatomic, strong) NSString *title;
+@end
+
+@implementation AModel
+- (NSString *)description {
+    return @"a model";
+}
+@end
 
 @interface ViewController ()
 
@@ -17,12 +29,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor blueColor];
+    self.view.backgroundColor = [UIColor whiteColor];
 //    NSLog(@"--%f--",[[UIApplication sharedApplication] statusBarFrame].size.height);
     
 //    [self imageMask];
 //
-    [self fadeLayerMask];
+//    [self fadeLayerMask];
     
 //    [self testResponderChain];
 //    [self testArr];
@@ -39,8 +51,172 @@
     
 //    [self threadSync];
     
+//    [self testNan];
     
-    [self testNan];
+//    [self testTintColor];
+//    [self test0];
+    
+//    [self testJoinString];
+//    [self testCategoryProperty];
+    
+//    [self addNextBtn];
+    
+    
+//    [self testSubview];
+//    [self testReplaceString];
+    
+//    [self testColor];
+//    [self testNilKey];
+    [self testPredicate];
+}
+
+-(void)testPredicate {
+    NSString *regex = @"^d.+g$";
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
+
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES '^d.+g$'"];
+    BOOL isMatch = [predicate evaluateWithObject:@"dog"];
+    NSLog(@"isMatch=%d",isMatch);
+}
+
+- (void)testNilKey {
+    NSString *key = nil;
+    NSDictionary *dic = @{@"name":@"Jack"};
+    NSLog(@"key=%@",dic[key]); // not crash
+}
+- (void)testColor {
+    UIView *blank = [[UIView alloc] initWithFrame:CGRectMake(30, 80, 100, 100)];
+    blank.backgroundColor = [self colorWithHex:0xff6666];
+    [self.view addSubview:blank];
+    
+//    CALayer *layer = [CALayer gradientLayerWithFrame:CGRectMake(30, 260, 80, 60) leftColor:[self colorWithHex:0xff8a70] rightColor:[self colorWithHex:0xff6666]];
+//    [self.view.layer addSublayer:layer];
+    
+    UIImageView *img = [[UIImageView alloc] initWithFrame:CGRectMake(30, 200, 100, 100)];
+    img.image = [UIImage imageNamed:@"#FF5860-SRGB"];
+    img.contentMode = UIViewContentModeScaleAspectFill;
+    [self.view addSubview:img];
+    
+    UIImageView *img2 = [[UIImageView alloc] initWithFrame:CGRectMake(30, 320, 100, 100)];
+    img2.image = [UIImage imageNamed:@"S RGB #FF6666"];
+    img2.contentMode = UIViewContentModeScaleAspectFill;
+    [self.view addSubview:img2];
+
+    UIImageView *img3 = [[UIImageView alloc] initWithFrame:CGRectMake(30, 440, 100, 100)];
+    img3.image = [UIImage imageNamed:@"DIS"];
+    img3.contentMode = UIViewContentModeScaleAspectFill;
+    [self.view addSubview:img3];
+
+}
+
+- (UIColor *)colorWithHex:(unsigned int)hex
+{
+    return [UIColor colorWithRed:((float)((hex & 0xFF0000) >> 16))/255.0 green:((float)((hex & 0xFF00) >> 8))/255.0 blue:((float)(hex & 0xFF))/255.0 alpha:1.0];
+}
+
+
+- (void)testReplaceString {
+    NSArray *arr = [NSArray array];
+    NSObject *obj = [arr firstObject];
+    
+    NSString *urlString = @"HTTPS://contentvideo.babytreeimg.com/contentplatform/20191212/115035_lhQAZSL_lOy8Opf2agLMw0bzPpg0.mp4";
+    NSLog(@"B==>%@",urlString);
+     
+//    [urlString localizedCompare:[UIView alloc]];
+
+    if ([[urlString lowercaseString] hasPrefix:@"https:"]) {
+        urlString = [urlString stringByReplacingCharactersInRange:NSMakeRange(0, 6) withString:@"http:"];
+//        urlString = [urlString stringByReplacingOccurrencesOfString:@"https:" withString:@"http:" options:NSLiteralSearch range:NSMakeRange(0, 6)];
+    }
+    NSLog(@"A==>%@",urlString);
+}
+
+
+- (void)testSubview {
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 30)];
+    label.text = @"哈哈哈";
+    
+    UIView *view1 = [[UIView alloc] initWithFrame:CGRectMake(20, 100, 100, 30)];
+    [view1 addSubview:label];
+    view1.backgroundColor = [UIColor orangeColor];
+    [self.view addSubview:view1];
+    
+    UIView *view2 = [[UIView alloc] initWithFrame:CGRectMake(20, 150, 100, 30)];
+    [view2 addSubview:label];
+    view2.backgroundColor = [UIColor greenColor];
+    [self.view addSubview:view2];
+}
+
+
+- (void)addNextBtn {
+    UIButton *nextBtn = [[UIButton alloc] initWithFrame:CGRectMake(100, 200, 200, 60)];
+    nextBtn.titleLabel.font = [UIFont systemFontOfSize:20 weight:UIFontWeightRegular];
+    [nextBtn setTitle:@"下一页Next-Regular" forState:UIControlStateNormal];
+    [nextBtn addTarget:self action:@selector(pushVC) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:nextBtn];
+    
+    UIButton *nextBtn1 = [[UIButton alloc] initWithFrame:CGRectMake(100, 260, 200, 60)];
+    nextBtn1.titleLabel.font = [UIFont systemFontOfSize:20 weight:UIFontWeightMedium];
+    [nextBtn1 setTitle:@"下一页Next-Medium" forState:UIControlStateNormal];
+    [nextBtn1 addTarget:self action:@selector(pushVC) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:nextBtn1];
+
+    UIButton *nextBtn2 = [[UIButton alloc] initWithFrame:CGRectMake(100, 320, 200, 60)];
+    nextBtn2.titleLabel.font = [UIFont systemFontOfSize:20 weight:UIFontWeightSemibold];
+    [nextBtn2 setTitle:@"下一页Next-Semibold" forState:UIControlStateNormal];
+    [nextBtn2 addTarget:self action:@selector(pushVC) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:nextBtn2];
+
+    
+}
+- (void)pushVC {
+    UIViewController *nextVC = [[UIViewController alloc] init];
+    nextVC.view.backgroundColor = [UIColor whiteColor];
+    nextVC.title = @"next";
+    [self.navigationController pushViewController:nextVC animated:YES];
+}
+
+-(void)testCategoryProperty {
+    NSObject *obj = [[NSObject alloc] init];
+    obj.myString = @"hahaha";
+    obj.myNumer = 99;
+    
+    NSString *str = obj.myString;
+    NSInteger num = obj.myNumer;
+    NSLog(@"string=%@, numer=%ld",str, num);
+}
+
+- (void)testJoinString {
+    AModel *model = [[AModel alloc] init];
+    NSArray *arr = @[@"sss",@(3),@{@"k":@"v"},model];
+    NSString *string = [arr componentsJoinedByString:@","];
+    NSLog(@"string=%@",string);
+}
+
+- (void)test0 {
+    NSDictionary *dict = @{@"code":@"0"};
+    if ([[dict objectForKey:@"codek"] integerValue]==0) {
+        NSLog(@"==0");
+    } else {
+        NSLog(@"not 0");
+    }
+}
+
+- (void)testTintColor {
+    self.view.tintColor = [UIColor greenColor];
+    UIImage *image = [UIImage imageNamed:@"baf_bind_device"];
+    image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(30, 200, 200, 60)];
+    [btn setTitle:@"tintColor" forState:UIControlStateNormal];
+//    [btn setTitleColor:self.view.tintColor forState:UIControlStateNormal];
+    [btn setImage:image forState:UIControlStateNormal];
+    btn.tintColor = self.view.tintColor;
+
+    [self.view addSubview:btn];
+}
+
+- (void)tintColorDidChange {
+    
 }
 
 - (void)testNan {

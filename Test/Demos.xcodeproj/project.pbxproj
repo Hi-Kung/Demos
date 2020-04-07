@@ -7,7 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D74E580B23605C7E001CEC9A /* NSObject+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = D74E580A23605C7E001CEC9A /* NSObject+Test.m */; };
 		D790138422005066009AA186 /* HKEasyTouchButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D790138322005066009AA186 /* HKEasyTouchButton.m */; };
+		D793671923AC69F70095FDF5 /* CALayer+SVGradientLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = D793671823AC69F70095FDF5 /* CALayer+SVGradientLayer.m */; };
+		D793671B23AC6D200095FDF5 /* 100ff6666.png in Resources */ = {isa = PBXBuildFile; fileRef = D793671A23AC6D200095FDF5 /* 100ff6666.png */; };
+		D793671F23AC700A0095FDF5 /* DIS.png in Resources */ = {isa = PBXBuildFile; fileRef = D793671C23AC700A0095FDF5 /* DIS.png */; };
+		D793672023AC700A0095FDF5 /* S RGB #FF6666.png in Resources */ = {isa = PBXBuildFile; fileRef = D793671D23AC700A0095FDF5 /* S RGB #FF6666.png */; };
+		D793672123AC700A0095FDF5 /* #FF5860-SRGB.png in Resources */ = {isa = PBXBuildFile; fileRef = D793671E23AC700A0095FDF5 /* #FF5860-SRGB.png */; };
 		D7FB2EAA2170801D00D22A57 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D7FB2EA92170801D00D22A57 /* AppDelegate.m */; };
 		D7FB2EAD2170801D00D22A57 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D7FB2EAC2170801D00D22A57 /* ViewController.m */; };
 		D7FB2EB02170801D00D22A57 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7FB2EAE2170801D00D22A57 /* Main.storyboard */; };
@@ -36,8 +42,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D74E580923605C7E001CEC9A /* NSObject+Test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+Test.h"; sourceTree = "<group>"; };
+		D74E580A23605C7E001CEC9A /* NSObject+Test.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Test.m"; sourceTree = "<group>"; };
 		D790138222005066009AA186 /* HKEasyTouchButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HKEasyTouchButton.h; sourceTree = "<group>"; };
 		D790138322005066009AA186 /* HKEasyTouchButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HKEasyTouchButton.m; sourceTree = "<group>"; };
+		D793671723AC69F60095FDF5 /* CALayer+SVGradientLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CALayer+SVGradientLayer.h"; sourceTree = "<group>"; };
+		D793671823AC69F70095FDF5 /* CALayer+SVGradientLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CALayer+SVGradientLayer.m"; sourceTree = "<group>"; };
+		D793671A23AC6D200095FDF5 /* 100ff6666.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 100ff6666.png; sourceTree = "<group>"; };
+		D793671C23AC700A0095FDF5 /* DIS.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DIS.png; sourceTree = "<group>"; };
+		D793671D23AC700A0095FDF5 /* S RGB #FF6666.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "S RGB #FF6666.png"; sourceTree = "<group>"; };
+		D793671E23AC700A0095FDF5 /* #FF5860-SRGB.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "#FF5860-SRGB.png"; sourceTree = "<group>"; };
 		D7FB2EA52170801D00D22A57 /* Demos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7FB2EA82170801D00D22A57 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D7FB2EA92170801D00D22A57 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -84,6 +98,8 @@
 		D790138122005010009AA186 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				D793671723AC69F60095FDF5 /* CALayer+SVGradientLayer.h */,
+				D793671823AC69F70095FDF5 /* CALayer+SVGradientLayer.m */,
 				D790138222005066009AA186 /* HKEasyTouchButton.h */,
 				D790138322005066009AA186 /* HKEasyTouchButton.m */,
 			);
@@ -120,9 +136,15 @@
 				D7FB2EAC2170801D00D22A57 /* ViewController.m */,
 				D7FB2EDA2173515600D22A57 /* LaunchScreen.storyboard */,
 				D7FB2EAE2170801D00D22A57 /* Main.storyboard */,
+				D793671E23AC700A0095FDF5 /* #FF5860-SRGB.png */,
+				D793671C23AC700A0095FDF5 /* DIS.png */,
+				D793671D23AC700A0095FDF5 /* S RGB #FF6666.png */,
+				D793671A23AC6D200095FDF5 /* 100ff6666.png */,
 				D7FB2EB12170801F00D22A57 /* Assets.xcassets */,
 				D7FB2EB62170801F00D22A57 /* Info.plist */,
 				D7FB2EB72170801F00D22A57 /* main.m */,
+				D74E580923605C7E001CEC9A /* NSObject+Test.h */,
+				D74E580A23605C7E001CEC9A /* NSObject+Test.m */,
 			);
 			path = Demos;
 			sourceTree = "<group>";
@@ -248,7 +270,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D793671F23AC700A0095FDF5 /* DIS.png in Resources */,
 				D7FB2EDC2173515600D22A57 /* LaunchScreen.storyboard in Resources */,
+				D793671B23AC6D200095FDF5 /* 100ff6666.png in Resources */,
+				D793672123AC700A0095FDF5 /* #FF5860-SRGB.png in Resources */,
+				D793672023AC700A0095FDF5 /* S RGB #FF6666.png in Resources */,
 				D7FB2EB22170801F00D22A57 /* Assets.xcassets in Resources */,
 				D7FB2EB02170801D00D22A57 /* Main.storyboard in Resources */,
 			);
@@ -275,7 +301,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D74E580B23605C7E001CEC9A /* NSObject+Test.m in Sources */,
 				D7FB2EAD2170801D00D22A57 /* ViewController.m in Sources */,
+				D793671923AC69F70095FDF5 /* CALayer+SVGradientLayer.m in Sources */,
 				D7FB2EB82170801F00D22A57 /* main.m in Sources */,
 				D790138422005066009AA186 /* HKEasyTouchButton.m in Sources */,
 				D7FB2EAA2170801D00D22A57 /* AppDelegate.m in Sources */,
