@@ -54,5 +54,37 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
++ (UIViewController *)currentViewController
+{
+    if ([NSThread isMainThread]) {
+        return [self getTopViewController];
+    } else {
+        NSLog(@"%s \n thread:%@",__func__,[NSThread currentThread]);
+
+        __block UIViewController *vc = nil;
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            vc = [self getTopViewController];
+        });
+        return vc;
+    }
+}
+
++ (UIViewController *)getTopViewController {
+    UINavigationController *routerVC = nil;
+    UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+    if ([rootViewController isKindOfClass:[UITabBarController class]])
+    {
+        UITabBarController *tabbarController  = (UITabBarController *)rootViewController;
+        UIViewController *selectedVC = tabbarController.selectedViewController;
+        if ([selectedVC isKindOfClass:[UINavigationController class]]) {
+            routerVC = (UINavigationController *)selectedVC;
+        }
+    }else if ([rootViewController isKindOfClass:[UINavigationController class]])
+    {
+        routerVC = (UINavigationController *)rootViewController;
+    }
+    
+    return routerVC.topViewController;
+}
 
 @end

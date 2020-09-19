@@ -10,6 +10,9 @@
 #import "HKEasyTouchButton.h"
 #import "NSObject+Test.h"
 #import "CALayer+SVGradientLayer.h"
+#import "Person.h"
+#import "AppDelegate.h"
+#import "NextViewController.h"
 
 @interface AModel : NSObject
 @property (nonatomic, strong) NSString *title;
@@ -22,7 +25,8 @@
 @end
 
 @interface ViewController ()
-
+@property (nonatomic, assign) NSUInteger count;
+@property (nonatomic, strong) NSTimer *timer;
 @end
 
 @implementation ViewController
@@ -30,6 +34,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(100, 100, 100, 60)];
+    [button setTitle:@"Next" forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    button.titleLabel.font = [UIFont systemFontOfSize:18];
+    [button addTarget:self action:@selector(nextAction) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:button];
 //    NSLog(@"--%f--",[[UIApplication sharedApplication] statusBarFrame].size.height);
     
 //    [self imageMask];
@@ -67,17 +77,279 @@
     
 //    [self testColor];
 //    [self testNilKey];
-    [self testPredicate];
+//    [self testPredicate];
+//    [self base64Image];
+//    [self testProperty];
+//    [self testEnumerateBlock];
+//    [self testUrl];
+//    [self testRunloop];
+//    [self testMutithread];
+//    [self testMutableArr];
+//    [self test_dispatch_sync];
+//    [self testKVO];
+//    [self testTrueAndFalse];
+    [self testRangeOfString];
+}
+
+- (void)testRangeOfString {
+    NSString *member_count_fmt_str = @"";
+    NSString *content = [NSString stringWithFormat:@"真诚邀请加入圈子，和%@位妈妈一起交流分享",member_count_fmt_str];
+    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
+    style.lineSpacing = 2;
+    NSMutableAttributedString *attrContent = [[NSMutableAttributedString alloc] initWithString:content];
+    [attrContent addAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:12],NSForegroundColorAttributeName:[UIColor whiteColor],NSParagraphStyleAttributeName:style} range:NSMakeRange(0, content.length)];
+    NSRange range = [content rangeOfString:member_count_fmt_str]; // nil crash!
+    [attrContent addAttributes:@{NSForegroundColorAttributeName:[UIColor redColor]} range:range];
+    NSLog(@"%@",attrContent);
+
+}
+
+- (void)testTrueAndFalse {
+    NSDictionary *dict = @{@"key":@"false"};
+    BOOL isTrue = [[dict objectForKey:@"key"] boolValue];
+    NSLog(@"===isTrue:%d",isTrue);
+}
+
+- (void)testKVO {
+    Person *person = [[Person alloc] init];
+    person.name = [@"jack" mutableCopy];
+    
+    [person addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
+    // 手动触发kvo，两句缺一不可
+    [person willChangeValueForKey:@"name"];//
+    [person didChangeValueForKey:@"name"]; // 内部调用observeValueForKeyPath方法
+    
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    NSLog(@"--- kvo got:\n%@",change);
+}
+
+- (void)test_dispatch_sync {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"thread:%@",[NSThread currentThread]);
+        UIViewController *vc = [AppDelegate currentViewController];
+        UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 100, 200, 100)];
+        btn.backgroundColor = [UIColor blueColor];
+        [vc.view addSubview:btn];
+    });
+}
+
+- (void)testMutableArr {
+    NSMutableArray *arr0 = [NSMutableArray arrayWithArray:@[@"1",@"2"]];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:arr0 forKey:@"mArr"];
+    
+    [defaults setObject:@"0" forKey:@"test"];
+    
+//    NSMutableArray *arr1 = [defaults objectForKey:@"mArr"];
+//    if ([arr1 isKindOfClass:[NSMutableArray class]]) {
+//        [arr1 removeAllObjects];
+//        NSLog(@"arr1:%@",arr1);
+//    }
+    
+    NSArray *arr = [defaults objectForKey:@"mArr"];
+    NSMutableArray * arr1 = [arr mutableCopy];
+    if ([arr1 isKindOfClass:[NSMutableArray class]]) {
+           [arr1 removeAllObjects];
+           NSLog(@"arr1:%@",arr1);
+       }
+}
+
+- (void)testMutithread {
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithDictionary:@{@"ts":@"0",@"name":@"jack",@"age":@"3"}];
+    
+    dispatch_queue_t queue  = dispatch_queue_create("aqueue", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_queue_t queue2  = dispatch_queue_create("bqueue", DISPATCH_QUEUE_CONCURRENT);
+
+    dispatch_async(queue, ^{
+        [dict setObject:@"0088" forKey:@"ts"];
+        [dict setObject:@"tom" forKey:@"name"];
+        [dict setObject:@"9" forKey:@"age"];
+        NSMutableDictionary *dictCopy0 = [NSMutableDictionary dictionary];
+        [dictCopy0 addEntriesFromDictionary:dict];
+        NSLog(@"copydict0:%@",dictCopy0);
+    });
+    dispatch_async(queue, ^{
+        [dict setObject:@"00df88" forKey:@"ts"];
+        [dict setObject:@"tdgdgd" forKey:@"name"];
+        [dict setObject:@"94" forKey:@"age"];
+        NSMutableDictionary *dictCopy1 = [NSMutableDictionary dictionary];
+        [dictCopy1 addEntriesFromDictionary:dict];
+        NSLog(@"copydict1:%@",dictCopy1);
+    });
+
+    
+    dispatch_async(queue2, ^{
+        [dict setObject:@"00288" forKey:@"ts"];
+        [dict setObject:@"treom" forKey:@"name"];
+        [dict setObject:@"934" forKey:@"age"];
+        NSMutableDictionary *dictCopy2 = [NSMutableDictionary dictionary];
+        [dictCopy2 addEntriesFromDictionary:dict];
+        NSLog(@"copydict2:%@",dictCopy2);
+    });
+
+    dispatch_async(queue2, ^{
+        [dict setObject:@"0098" forKey:@"ts"];
+        [dict setObject:@"tom" forKey:@"name"];
+        [dict setObject:@"9" forKey:@"age"];
+        
+        NSMutableDictionary *dictCopy3 = [NSMutableDictionary dictionary];
+        [dictCopy3 addEntriesFromDictionary:dict];
+        NSLog(@"copydict3:%@",dictCopy3);
+    });
+    
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        dispatch_async(queue2, ^{
+            [dict setObject:@"000" forKey:@"ts"];
+            [dict setObject:@"555" forKey:@"name"];
+            [dict setObject:@"999" forKey:@"age"];
+            
+            NSMutableDictionary *dictCopy3 = [NSMutableDictionary dictionary];
+            [dictCopy3 addEntriesFromDictionary:dict];
+            NSLog(@"copydict3:%@",dictCopy3);
+        });
+
+    });
+    
+}
+
+- (void)testRunloop
+{
+ dispatch_async(dispatch_get_global_queue(0, 0), ^{
+
+ NSLog(@"开启线程…….");
+ self.timer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(doTimerTask1:) userInfo:nil repeats:YES];
+ [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSDefaultRunLoopMode];
+
+ //一般情况下，若runloop一直存在，后面的代码就不执行了
+ //最后一个参数，是否处理完事件返回,结束runLoop
+ SInt32 result = CFRunLoopRunInMode(kCFRunLoopDefaultMode, 100, YES);
+ /*
+ kCFRunLoopRunFinished = 1, //Run Loop结束，没有Timer或者其他Input Source
+ kCFRunLoopRunStopped = 2, //Run Loop被停止，使用CFRunLoopStop停止Run Loop
+ kCFRunLoopRunTimedOut = 3, //Run Loop超时
+ kCFRunLoopRunHandledSource = 4 ////Run Loop处理完事件，注意Timer事件的触发是不会让Run Loop退出返回的，即使CFRunLoopRunInMode的第三个参数是YES也不行
+ */
+ switch (result)
+  {
+ case kCFRunLoopRunFinished:
+ NSLog(@"kCFRunLoopRunFinished");
+
+ break;
+ case kCFRunLoopRunStopped:
+ NSLog(@"kCFRunLoopRunStopped");
+
+ case kCFRunLoopRunTimedOut:
+ NSLog(@"kCFRunLoopRunTimedOut");
+
+ case kCFRunLoopRunHandledSource:
+ NSLog(@"kCFRunLoopRunHandledSource");
+ default:
+ break;
+ }
+
+ NSLog(@"结束线程…….");
+
+ });
+
+}
+
+- (void)doTimerTask1:(NSTimer *)timer
+{
+
+ self.count++;
+ if (self.count == 2)
+ {
+ //停止timer，runloop没有source，没有timer，没有observer，退出runloop，线程随之往下执行，完成后也退出。
+ [self.timer invalidate];
+ }
+ NSLog(@"do timer task count:%d",self.count);
+}
+
+- (void)testUrl {
+    NSString *urlstr = @"https://linkst.m.jd.com/ul/ul.action?openApp.jdMobile://virtual?params=%7B%22SE%22%3A%22ADC_ywTpLbYtSAgLqU%2B9XThDVaYe3V%2F00p%2Bc87KvKXB5PjdobvKNns7%2FkmObCZUUyRpdoo1z4gAc9dDYArHS8G8YMNRzOexebJZuyjVz8jBmhbm0eVU5n3XHA8OZbh3DBudSNdwPKQfOnlBaFp37HiEqtZa6WQOKzXRrsCYBgksdVIA%3D%22%2C%22action%22%3A%22to%22%2C%22category%22%3A%22jump%22%2C%22des%22%3A%22getCoupon%22%2C%22ext%22%3A%22%7B%5C%22ad%5C%22%3A%5C%222598%5C%22%2C%5C%22ch%5C%22%3A%5C%223%5C%22%2C%5C%22shop%5C%22%3A%5C%22179479%5C%22%2C%5C%22ts%5C%22%3A%5C%221590455706%5C%22%2C%5C%22uniqid%5C%22%3A%5C%22%7B%5C%5C%5C%22material_id%5C%5C%5C%22%3A%5C%5C%5C%222158286058%5C%5C%5C%22%2C%5C%5C%5C%22pos_id%5C%5C%5C%22%3A%5C%5C%5C%222598%5C%5C%5C%22%2C%5C%5C%5C%22sid%5C%5C%5C%22%3A%5C%5C%5C%22111_27257a2839f7433b80f628db2e45b47c_1%5C%5C%5C%22%7D%5C%22%7D%22%2C%22kepler_param%22%3A%7B%22channel%22%3A%222e3b9ecfb3a1465badbbbeb48df4140c%22%2C%22source%22%3A%22kepler-open%22%7D%2C%22locationHref%22%3A%22https%3A%2F%2Fccc-x.jd.com%2Fdsp%2Fnc%3Fext%3DaHR0cHM6Ly9zaG9wLm0uamQuY29tLz9zaG9wSWQ9MTc5NDc5JnV0bV9zb3VyY2U9cGRhcHB3YWtldXB1cF8yMDE3MDAwMiZQVEFHPTE3MDUxLjkuMSZhZF9vZD0x%26log%3DGyPFQwO04WPq225YjLm7qmIeA-hzZ2lEZltgznDgmfV1uujOT7w1Fa2TNJxy3teMVHO8KFXwKdtj5YE3o62jsU1jxc6esgPBReuaAxDq7dbFs0sn2dSyDzFzxiiUNwnYwFdldLHJU4yiD_9w8MRcpgBGjTxziY_KwaXv3HnQjC1_5u6XfE6wvmxkpyCfXoqi1JN9tfMPAMbdia729XCPt-EN9AtJDPdhgEQSf9e3_0ZgrHc1Da1PyxMhrafsoGfPsMQTmilJs-TdTwra5LplVjOnFtSKtUMO2da-EJSIKQXgGlteJTmkw4Yxw36tzhH8oXEDRsHuAy0LapH5LAbvk7oA3YFbWbCQxgThMRbW00qlQ0E_dxxSYROHpQcJ8bv6Sj0wRoV2FsrvNKlYBThgob8rwFpVYwy8sTHfpmFNnF2Q3IvAj64lJSDpg5Cn3x6gTMWOxQmClZsC8qjI4XtWoDTL2OB8pq3XSaULYkyeMf49yB3KakGfl3grCvTjsHlonMICvNn1qgiTkPUIybhUP9A3v0GYPqMI9zF6kdbLdQUFGi23xuHO9a7OJsNv9H3QAn2I8YVpx4HSi5prqZrC4sUloTAh92mGP9Le2lZrzhGP6qkVcSOUWOVtY4qb0Dzi%26v%3D404%22%2C%22m_param%22%3A%7B%22jdv%22%3A%22238571484%7Crgyun%7Ct_1000113567_2158286058_2598%7Cadrealizable%7C_2_app_0_34b1d06f93e442ca8b6271eeb20ccf23-p_2598%22%7D%2C%22sourceType%22%3A%22adx%22%2C%22sourceValue%22%3A%22rgyun_111%22%2C%22url%22%3A%22https%3A%2F%2Fccc-x.jd.com%2Fdsp%2Fnc%3Fext%3DaHR0cHM6Ly9zaG9wLm0uamQuY29tLz9zaG9wSWQ9MTc5NDc5JnV0bV9zb3VyY2U9cGRhcHB3YWtldXB1cF8yMDE3MDAwMiZQVEFHPTE3MDUxLjkuMSZhZF9vZD0x%26log%3DGyPFQwO04WPq225YjLm7qmIeA-hzZ2lEZltgznDgmfV1uujOT7w1Fa2TNJxy3teMVHO8KFXwKdtj5YE3o62jsU1jxc6esgPBReuaAxDq7dbFs0sn2dSyDzFzxiiUNwnYwFdldLHJU4yiD_9w8MRcpgBGjTxziY_KwaXv3HnQjC1_5u6XfE6wvmxkpyCfXoqi1JN9tfMPAMbdia729XCPty_1mShgPZg53t-3WIblzqiRNwkypr4yrMUbOpTSKfth8GimBoblkJzRVY-Qfc2A4otbPr1tugHi5euLuB709pPCHPRm7U6k0tEDX_dnB2-7FmsoW0CD9sXqfGwLFNL-GIjEkfqYuOO1KKiABVywMuYMOyGp-UDst08Sf3B9JunmxKEZLeZhOhvjAEUox8uru6zJfvnyrEKeIQ3piMhmrxeSy-cpEJPMD3QtSbBacdaWgRF5Apb5wBPuHhw1Pzho0yB5l3_UWLqGGriXEZdpnlibK3U8VR764bBKZ_5reBZcq-UlU2OtX9887GJajTdMeygfVkCx85Qe8gTKOHHMALpwJeTPhkGytU5JB1qXdUnbGapns3ARRe7TWnZyGVOsy8fQoen9asgkJG9ixcPYzIaq2_oqVZBkBjkd6X0PWKz0y2tJq-JAiD-nziMaQFOsurItxAKvlr0IomK4bSFik3M%26v%3D404%26SE%3D1%22%7D%0A";
+    NSURL *url = [NSURL URLWithString:urlstr];
+    
+    NSLog(@"===> %@\nhoast=%@",url,url.host);
+}
+// 数组遍历是否在主线程
+- (void)testEnumerateBlock {
+    NSArray *array = @[@"1",@"2",@"3"];
+    NSMutableString *num = [NSMutableString stringWithString:@"n"];
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [num appendString:obj];
+            NSLog(@"block Thread: %@",[NSThread currentThread]); // 子线程
+        }];
+    });
+    NSLog(@"%@",num);
+
+    [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [num appendString:obj];
+        NSLog(@"block Thread: %@",[NSThread currentThread]); // 主线程
+    }];
+    NSLog(@"%@",num);
+}
+
+- (void)testProperty {
+    /*
+     把可变字符串赋值给带copy修饰的字符串属性(字符串属性是可变字符串或不可变字符串均可)时，是做了深度拷贝的。(但是得到的仍是不可变字符串)
+     把不可变字符串赋值给带copy修饰的字符串属性(字符串属性是可变字符串或不可变字符串均可)时，是做了浅拷贝的。
+     */
+    NSMutableString *str = [[NSMutableString alloc] initWithString:@"Tom"];
+    Person *person = [[Person alloc]init];
+    person.name = str; // name做了深拷贝，但是得到的仍是不可变字符串
+    
+    [str appendString:@"6"];
+//    [person.name appendString:@"and Jerry"]; // crash !
+    
+    NSLog(@"\n%@\n%@", str, person.name);
+    NSLog(@"\n%p\n%p", str, person.name);
+
+}
+
+- (void)base64Image {
+    NSString *jsonPath = [[NSBundle mainBundle] pathForResource:@"test" ofType:@"json"];
+    NSData *jsonData = [NSData dataWithContentsOfFile:jsonPath];
+    NSDictionary *params = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:nil];
+
+    NSString *imageBase64 = [params objectForKey:@"topic_post_image"];
+    NSData *decodedImageData  = imageBase64?[[NSData alloc] initWithBase64EncodedString:imageBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]:nil;
+    UIImage *image = decodedImageData?[UIImage imageWithData:decodedImageData]:nil;
+    NSLog(@"image:%@",image);
+
 }
 
 -(void)testPredicate {
-    NSString *regex = @"^d.+g$";
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
+//    NSString *regex = @"^d.+g$";
+    NSString *regex = @"^7567.*$";
+
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF LIKE %@",regex];
 
 //    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES '^d.+g$'"];
-    BOOL isMatch = [predicate evaluateWithObject:@"dog"];
+//    BOOL isMatch = [predicate evaluateWithObject:@"dog"];
+    
+    NSString *searchText = @"75629819";
+    BOOL isMatch = [self hitWithPattern:regex value:searchText];
+    
     NSLog(@"isMatch=%d",isMatch);
+
 }
+
+- (BOOL)hitWithPattern:(NSString *)pattern value:(NSString *)value {
+    NSRange range = [value rangeOfString:pattern options:NSRegularExpressionSearch];
+    return range.location!=NSNotFound;
+    
+//    NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:pattern options:0 error:nil];
+//    NSInteger count = [regex numberOfMatchesInString:value options:NSMatchingReportProgress range:NSMakeRange(0, value.length)];
+////    NSTextCheckingResult *r = [regex firstMatchInString:value options:NSMatchingReportProgress range:NSMakeRange(0, value.length)];
+//    BOOL result = count>0 ? YES : NO;
+//    return result;
+}
+
 
 - (void)testNilKey {
     NSString *key = nil;
@@ -413,5 +685,8 @@ void swapInt(NSInteger *x, NSInteger *y) {
     NSLog(@"~~~removeResult=%d\n-------result =%d",removeResult,result);
 }
 
-
+- (void)nextAction {
+    NextViewController *next = [[NextViewController alloc] init];
+    [self.navigationController pushViewController:next animated:YES];
+}
 @end
